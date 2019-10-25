@@ -3,14 +3,12 @@ package com.makar.test.domain;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
-public class UserAuth {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+public class UserAuth extends IdHolder {
 
     private String password;
 
@@ -26,10 +24,19 @@ public class UserAuth {
     private boolean isEnabled = true;
 
     @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(name = "userRoles",
+    @JoinTable(name = "usersRoles",
             joinColumns = @JoinColumn(name = "userAuth_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id"))
     private List<Role> roles;
+
+    @ManyToMany
+    @JoinTable(name = "sharedWith",
+            joinColumns = @JoinColumn(name = "userAuth_id"),
+            inverseJoinColumns = @JoinColumn(name = "task_id"))
+    private Set<Task> sharedTasks = new HashSet<>();
+
+    @OneToMany(mappedBy = "createdBy")
+    private Set<Task> createdTasks = new HashSet<>();
 
     @OneToOne(cascade = CascadeType.ALL)
     private UserProfile userProfile;
@@ -40,14 +47,6 @@ public class UserAuth {
     public UserAuth(String password, String email) {
         this.password = password;
         this.email = email;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
     }
 
     public String getPassword() {
@@ -112,6 +111,22 @@ public class UserAuth {
 
     public void setUserProfile(UserProfile userProfile) {
         this.userProfile = userProfile;
+    }
+
+    public Set<Task> getSharedTasks() {
+        return sharedTasks;
+    }
+
+    public void setSharedTasks(Set<Task> sharedTasks) {
+        this.sharedTasks = sharedTasks;
+    }
+
+    public Set<Task> getCreatedTasks() {
+        return createdTasks;
+    }
+
+    public void setCreatedTasks(Set<Task> createdTasks) {
+        this.createdTasks = createdTasks;
     }
 
 }

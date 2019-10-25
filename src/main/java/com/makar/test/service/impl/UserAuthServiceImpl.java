@@ -64,4 +64,15 @@ public class UserAuthServiceImpl implements UserAuthService {
         return tokenProvider.generateToken(authenticate);
     }
 
+    @Override
+    public UserAuth getCurrentUser() {
+        return (UserAuth) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    }
+
+    @Override
+    public UserAuth findByEmail(String email) {
+        return userAuthRepository.findByEmail(email)
+                .orElseThrow(() -> new NotFoundException("userAuth not found by email"));
+    }
+
 }
