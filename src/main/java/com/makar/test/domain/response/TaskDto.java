@@ -1,17 +1,20 @@
-package com.makar.test.domain.request;
+package com.makar.test.domain.response;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
-public class TaskRequest {
+public class TaskDto {
 
     private String name;
 
     private String description;
 
-    private LocalDateTime deadline;
+    private Long createdBy;
 
-    public TaskRequest() {
-    }
+    private List<Long> sharedWith = new ArrayList<>();
+
+    private LocalDateTime deadline;
 
     public String getName() {
         return name;
@@ -29,6 +32,22 @@ public class TaskRequest {
         this.description = description;
     }
 
+    public Long getCreatedBy() {
+        return createdBy;
+    }
+
+    public void setCreatedBy(Long createdBy) {
+        this.createdBy = createdBy;
+    }
+
+    public List<Long> getSharedWith() {
+        return sharedWith;
+    }
+
+    public void setSharedWith(List<Long> sharedWith) {
+        this.sharedWith = sharedWith;
+    }
+
     public LocalDateTime getDeadline() {
         return deadline;
     }
@@ -36,4 +55,5 @@ public class TaskRequest {
     public void setDeadline(LocalDateTime deadline) {
         this.deadline = deadline;
     }
+
 }

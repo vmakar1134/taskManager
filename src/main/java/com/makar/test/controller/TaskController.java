@@ -1,8 +1,8 @@
 package com.makar.test.controller;
 
-import com.makar.test.domain.Task;
 import com.makar.test.domain.request.ShareTaskRequest;
 import com.makar.test.domain.request.TaskRequest;
+import com.makar.test.domain.response.TaskDto;
 import com.makar.test.service.TaskService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -21,22 +21,32 @@ public class TaskController {
     }
 
     @GetMapping("{id}")
-    public Task getTask(@PathVariable Long id) {
-        return taskService.getTask(id);
+    public TaskDto getTask(@PathVariable Long id) {
+        return taskService.getTaskDto(id);
     }
 
-    @GetMapping("")
-    public List<Task> getAll() {
+    @GetMapping("all")
+    public List<TaskDto> getAll() {
         return taskService.getAll();
     }
 
+    @GetMapping("shared")
+    public List<TaskDto> getShared() {
+        return taskService.getShared();
+    }
+
+    @GetMapping("created")
+    public List<TaskDto> getCreated() {
+        return taskService.getCreated();
+    }
+
     @PostMapping("create")
-    public Task createTask (@RequestBody TaskRequest taskRequest){
+    public TaskDto createTask(@RequestBody TaskRequest taskRequest) {
         return taskService.createTask(taskRequest);
     }
 
     @PostMapping("update/{id}")
-    public Task updateTask(@RequestBody TaskRequest taskRequest, @PathVariable Long id) {
+    public TaskDto updateTask(@RequestBody TaskRequest taskRequest, @PathVariable Long id) {
         return taskService.updateTask(id, taskRequest);
     }
 

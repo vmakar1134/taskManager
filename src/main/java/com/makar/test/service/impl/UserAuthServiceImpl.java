@@ -1,6 +1,7 @@
 package com.makar.test.service.impl;
 
 import com.makar.test.config.TokenProvider;
+import com.makar.test.config.UserPrincipal;
 import com.makar.test.domain.Role;
 import com.makar.test.domain.UserAuth;
 import com.makar.test.domain.enums.Roles;
@@ -66,7 +67,9 @@ public class UserAuthServiceImpl implements UserAuthService {
 
     @Override
     public UserAuth getCurrentUser() {
-        return (UserAuth) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        UserPrincipal principal = (UserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return userAuthRepository.findById(principal.getId())
+                .orElseThrow(() -> new NotFoundException("no user in security context"));
     }
 
     @Override

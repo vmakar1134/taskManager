@@ -3,6 +3,7 @@ package com.makar.test.domain;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -36,7 +37,7 @@ public class UserAuth extends IdHolder {
     private Set<Task> sharedTasks = new HashSet<>();
 
     @OneToMany(mappedBy = "createdBy")
-    private Set<Task> createdTasks = new HashSet<>();
+    private List<Task> createdTasks = new ArrayList<>();
 
     @OneToOne(cascade = CascadeType.ALL)
     private UserProfile userProfile;
@@ -121,11 +122,11 @@ public class UserAuth extends IdHolder {
         this.sharedTasks = sharedTasks;
     }
 
-    public Set<Task> getCreatedTasks() {
+    public List<Task> getCreatedTasks() {
         return createdTasks;
     }
 
-    public void setCreatedTasks(Set<Task> createdTasks) {
+    public void setCreatedTasks(List<Task> createdTasks) {
         this.createdTasks = createdTasks;
     }
 

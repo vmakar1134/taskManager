@@ -1,8 +1,6 @@
 package com.makar.test.domain;
 
-import javax.persistence.Entity;
-import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
+import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
@@ -14,19 +12,15 @@ public class Task extends IdHolder {
 
     private String description;
 
-    private LocalDateTime startDateTime;
+    private LocalDateTime deadline;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     private UserAuth createdBy;
 
-    @ManyToMany(mappedBy = "sharedTasks")
+    @ManyToMany(mappedBy = "sharedTasks", fetch = FetchType.LAZY)
     private Set<UserAuth> sharedWith = new HashSet<>();
 
     public Task() {
-    }
-
-    public Task(String description, String name) {
-        super();
     }
 
     public String getName() {
@@ -45,20 +39,12 @@ public class Task extends IdHolder {
         this.description = description;
     }
 
-    public LocalDateTime getStartDateTime() {
-        return startDateTime;
+    public LocalDateTime getDeadline() {
+        return deadline;
     }
 
-    public void setStartDateTime(LocalDateTime startDateTime) {
-        this.startDateTime = startDateTime;
-    }
-
-    public Set<UserAuth> getSharedWith() {
-        return sharedWith;
-    }
-
-    public void setSharedWith(Set<UserAuth> sharedWith) {
-        this.sharedWith = sharedWith;
+    public void setDeadline(LocalDateTime deadline) {
+        this.deadline = deadline;
     }
 
     public UserAuth getCreatedBy() {
@@ -67,6 +53,14 @@ public class Task extends IdHolder {
 
     public void setCreatedBy(UserAuth createdBy) {
         this.createdBy = createdBy;
+    }
+
+    public Set<UserAuth> getSharedWith() {
+        return sharedWith;
+    }
+
+    public void setSharedWith(Set<UserAuth> sharedWith) {
+        this.sharedWith = sharedWith;
     }
 
 }
