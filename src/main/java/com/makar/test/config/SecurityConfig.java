@@ -21,19 +21,31 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
-    @Autowired
-    private CustomUserDetailsService customUserDetailsService;
+    private final CustomUserDetailsService customUserDetailsService;
+
+    private final RequestProcessingJWTFilter requestProcessingJWTFilter;
+
+    private final String[] SWAGGER_WHITELIST = {
+            "/swagger-resources/**",
+            "/swagger-ui.html",
+            "/v2/api-docs",
+            "/webjars/**",
+            "/h2/**"
+    };
 
     @Autowired
-    private RequestProcessingJWTFilter requestProcessingJWTFilter;
+    public SecurityConfig(CustomUserDetailsService customUserDetailsService, RequestProcessingJWTFilter requestProcessingJWTFilter) {
+        this.customUserDetailsService = customUserDetailsService;
+        this.requestProcessingJWTFilter = requestProcessingJWTFilter;
+    }
 
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
-    @Bean(BeanIds.AUTHENTICATION_MANAGER)
     @Override
+    @Bean(BeanIds.AUTHENTICATION_MANAGER)
     public AuthenticationManager authenticationManagerBean() throws Exception {
         return super.authenticationManagerBean();
     }
@@ -59,6 +71,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .authorizeRequests()
                 .antMatchers(HttpMethod.POST, "/user/auth/**")
+                .permitAll()
+                .antMatchers(SWAGGER_WHITELIST)
                 .permitAll()
                 .and()
                 .authorizeRequests()
