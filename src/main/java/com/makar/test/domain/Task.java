@@ -1,6 +1,12 @@
 package com.makar.test.domain;
 
-import javax.persistence.*;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
@@ -14,14 +20,17 @@ public class Task extends IdHolder {
 
     private LocalDateTime deadline;
 
+    @CreationTimestamp
+    private LocalDateTime createdAt;
+
+    @UpdateTimestamp
+    private LocalDateTime updatedAt;
+
     @ManyToOne(fetch = FetchType.EAGER)
     private UserAuth createdBy;
 
-    @ManyToMany(mappedBy = "sharedTasks", fetch = FetchType.LAZY)
+    @ManyToMany(mappedBy = "sharedTasks")
     private Set<UserAuth> sharedWith = new HashSet<>();
-
-    public Task() {
-    }
 
     public String getName() {
         return name;
@@ -45,6 +54,22 @@ public class Task extends IdHolder {
 
     public void setDeadline(LocalDateTime deadline) {
         this.deadline = deadline;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(LocalDateTime updatedAt) {
+        this.updatedAt = updatedAt;
     }
 
     public UserAuth getCreatedBy() {

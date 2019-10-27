@@ -18,7 +18,7 @@ public interface TaskService {
 
     void shareTask(ShareTaskRequest shareTaskRequest);
 
-    List<TaskDto> getAll();
+    List<TaskDto> getAllTaskDtos();
 
     List<TaskDto> getShared();
 

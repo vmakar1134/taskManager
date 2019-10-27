@@ -27,7 +27,7 @@ public class TaskController {
 
     @GetMapping("all")
     public List<TaskDto> getAll() {
-        return taskService.getAll();
+        return taskService.getAllTaskDtos();
     }
 
     @GetMapping("shared")

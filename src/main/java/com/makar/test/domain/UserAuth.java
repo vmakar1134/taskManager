@@ -31,7 +31,7 @@ public class UserAuth extends IdHolder {
     private List<Role> roles;
 
     @ManyToMany
-    @JoinTable(name = "sharedWith",
+    @JoinTable(name = "shared_tasks",
             joinColumns = @JoinColumn(name = "userAuth_id"),
             inverseJoinColumns = @JoinColumn(name = "task_id"))
     private Set<Task> sharedTasks = new HashSet<>();

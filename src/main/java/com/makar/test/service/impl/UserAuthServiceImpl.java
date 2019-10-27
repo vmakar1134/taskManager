@@ -6,6 +6,7 @@ import com.makar.test.domain.Role;
 import com.makar.test.domain.UserAuth;
 import com.makar.test.domain.enums.Roles;
 import com.makar.test.domain.request.AuthenticateRequest;
+import com.makar.test.exception.ConflictException;
 import com.makar.test.exception.NotFoundException;
 import com.makar.test.repository.RoleRepository;
 import com.makar.test.repository.UserAuthRepository;
@@ -44,6 +45,10 @@ public class UserAuthServiceImpl implements UserAuthService {
 
     @Override
     public void register(AuthenticateRequest registerRequest) {
+        if (userAuthRepository.existsByEmail(registerRequest.getLogin())) {
+            throw new ConflictException("Login already registered");
+        }
+
         String encodedPassword = passwordEncoder.encode(registerRequest.getPassword());
         UserAuth userAuth = new UserAuth(encodedPassword, registerRequest.getLogin());
 
@@ -69,13 +74,13 @@ public class UserAuthServiceImpl implements UserAuthService {
     public UserAuth getCurrentUser() {
         UserPrincipal principal = (UserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         return userAuthRepository.findById(principal.getId())
-                .orElseThrow(() -> new NotFoundException("no user in security context"));
+                .orElseThrow(() -> new NotFoundException("No user in security context"));
     }
 
     @Override
     public UserAuth findByEmail(String email) {
         return userAuthRepository.findByEmail(email)
-                .orElseThrow(() -> new NotFoundException("userAuth not found by email"));
+                .orElseThrow(() -> new NotFoundException("UserAuth not found by email"));
     }
 
 }

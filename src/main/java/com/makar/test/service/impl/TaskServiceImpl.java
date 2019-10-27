@@ -1,4 +1,4 @@
-package com.makar.test.service.user.impl;
+package com.makar.test.service.impl;
 
 import com.makar.test.domain.Task;
 import com.makar.test.domain.UserAuth;
@@ -9,6 +9,7 @@ import com.makar.test.exception.ConflictException;
 import com.makar.test.exception.NotFoundException;
 import com.makar.test.mapper.TaskMapper;
 import com.makar.test.repository.TaskRepository;
+import com.makar.test.repository.UserAuthRepository;
 import com.makar.test.service.TaskService;
 import com.makar.test.service.UserAuthService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,13 +25,16 @@ public class TaskServiceImpl implements TaskService {
 
     private final TaskRepository taskRepository;
 
+    private final UserAuthRepository userAuthRepository;
+
     private final UserAuthService userAuthService;
 
     private final TaskMapper taskMapper;
 
     @Autowired
-    public TaskServiceImpl(TaskRepository taskRepository, UserAuthService userAuthService, TaskMapper taskMapper) {
+    public TaskServiceImpl(TaskRepository taskRepository, UserAuthRepository userAuthRepository, UserAuthService userAuthService, TaskMapper taskMapper) {
         this.taskRepository = taskRepository;
+        this.userAuthRepository = userAuthRepository;
         this.userAuthService = userAuthService;
         this.taskMapper = taskMapper;
     }
@@ -58,7 +62,13 @@ public class TaskServiceImpl implements TaskService {
     @Override
     public void shareTask(ShareTaskRequest request) {
         UserAuth userAuth = userAuthService.findByEmail(request.getEmail());
-        userAuth.getCreatedTasks().add(getTask(request.getId()));
+        Task task = getAllTasks()
+                .stream()
+                .filter(t -> t.getId().equals(request.getId()))
+                .findAny()
+                .orElseThrow(() -> new NotFoundException("task not found"));
+        userAuth.getSharedTasks().add(task);
+        userAuthRepository.save(userAuth);
     }
 
     @Override
@@ -67,12 +77,8 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    public List<TaskDto> getAll() {
-        UserAuth currentUser = userAuthService.getCurrentUser();
-        List<Task> createdTasks = currentUser.getCreatedTasks();
-        Set<Task> sharedTasks = currentUser.getSharedTasks();
-        sharedTasks.addAll(createdTasks);
-        return taskMapper.toDtoList(new ArrayList<>(sharedTasks));
+    public List<TaskDto> getAllTaskDtos() {
+        return taskMapper.toDtoList(getAllTasks());
     }
 
     @Override
@@ -83,6 +89,14 @@ public class TaskServiceImpl implements TaskService {
     @Override
     public List<TaskDto> getShared() {
         return taskMapper.toDtoList(new ArrayList<>(userAuthService.getCurrentUser().getSharedTasks()));
+    }
+
+    private List<Task> getAllTasks() {
+        UserAuth currentUser = userAuthService.getCurrentUser();
+        List<Task> createdTasks = currentUser.getCreatedTasks();
+        Set<Task> sharedTasks = currentUser.getSharedTasks();
+        sharedTasks.addAll(createdTasks);
+        return new ArrayList<>(sharedTasks);
     }
 
     private Task getTask(Long id) {
