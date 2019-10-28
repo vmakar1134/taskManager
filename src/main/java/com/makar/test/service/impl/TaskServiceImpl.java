@@ -62,6 +62,9 @@ public class TaskServiceImpl implements TaskService {
     @Override
     public void shareTask(ShareTaskRequest request) {
         UserAuth userAuth = userAuthService.findByEmail(request.getEmail());
+        if (userAuth.equals(userAuthService.getCurrentUser())) {
+            throw new ConflictException("Cannot share task to yourself");
+        }
         Task task = getAllTasks()
                 .stream()
                 .filter(t -> t.getId().equals(request.getId()))
