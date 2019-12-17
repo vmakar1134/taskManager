@@ -1,5 +1,4 @@
 # taskManager
-NeardySoft test task:
 
 Implement task manager with the following functionality:
 Register in a system; </br>
